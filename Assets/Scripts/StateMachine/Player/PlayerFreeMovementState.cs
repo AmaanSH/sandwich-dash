@@ -1,46 +1,78 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerFreeMovementState : PlayerBaseState
 {
+    private readonly int MOVEMENT_SPEED = Animator.StringToHash("MovementSpeed");
+    private readonly int MOVEMENT_BLENDTREE = Animator.StringToHash("FreeMovementBlendTree");
+
+    private const float ANIMATOR_DAMP_TIME = 0.1f;
+    private const float DASH_TIME = 0.3f;
+
+    private bool isDashing = false;
+    private float dashingTimeElapsed;
+
     public PlayerFreeMovementState(PlayerStateMachine stateMachine) : base(stateMachine) {}
 
     public override void Enter()
     {
         stateMachine.InputReader.InteractEvent += OnInteraction;
+        stateMachine.InputReader.DashEvent += OnDash;
+
+        stateMachine.Animator.Play(MOVEMENT_BLENDTREE);
     }
 
     public override void Tick(float deltaTime)
     {
-        Vector3 movement = GetMovement();
-        Move(movement * stateMachine.FreeLookMovementSpeed, deltaTime);
+        float speed = (isDashing) ? stateMachine.DashSpeed : stateMachine.WalkSpeed;
+        float value = (isDashing) ? 1f : 0.5f;
 
-        if (stateMachine.InputReader.MovementValue == Vector2.zero)
+        Vector3 movement = (isDashing) ? GetDashMovement() : GetMovement();
+        Move(movement * speed, deltaTime);
+
+        if (isDashing)
         {
-            return;
+            dashingTimeElapsed += deltaTime;
+            if (dashingTimeElapsed > DASH_TIME)
+            {
+                isDashing = false;
+                dashingTimeElapsed = 0f;
+            }
+        }
+        else
+        {
+            if (stateMachine.InputReader.MovementValue == Vector2.zero)
+            {
+                stateMachine.Animator.SetFloat(MOVEMENT_SPEED, 0f, ANIMATOR_DAMP_TIME, deltaTime);
+                return;
+            }
         }
 
+        stateMachine.Animator.SetFloat(MOVEMENT_SPEED, value, ANIMATOR_DAMP_TIME, deltaTime);
         FaceMovementDirection(movement, deltaTime);
     }
 
     public override void Exit()
     {
         stateMachine.InputReader.InteractEvent -= OnInteraction;
+        stateMachine.InputReader.DashEvent -= OnDash;
     }
 
     private Vector3 GetMovement()
     {
-        Vector3 forward = stateMachine.MainCameraTransform.forward;
-        Vector3 right = stateMachine.MainCameraTransform.right;
+        return new Vector3(-stateMachine.InputReader.MovementValue.x, 0, -stateMachine.InputReader.MovementValue.y);
+    }
 
-        forward.y = 0f;
-        right.y = 0f;
+    private Vector3 GetDashMovement()
+    {
+        Vector3 forward = stateMachine.transform.forward;
+        forward.y = 0;
 
         forward.Normalize();
-        right.Normalize();
 
-        return forward * stateMachine.InputReader.MovementValue.y + right * stateMachine.InputReader.MovementValue.x;
+        return forward * 1f;
     }
 
     private void FaceMovementDirection(Vector3 movement, float deltaTime)
@@ -49,6 +81,15 @@ public class PlayerFreeMovementState : PlayerBaseState
             stateMachine.transform.rotation,
             Quaternion.LookRotation(movement),
             deltaTime * stateMachine.RotationDamping);
+    }
+
+    private void OnDash()
+    {
+        if (stateMachine.CanDash())
+        {
+            stateMachine.SetDash();
+            isDashing = true;
+        }
     }
 
     private void OnInteraction()
