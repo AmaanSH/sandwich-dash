@@ -6,8 +6,9 @@ using static UnityEngine.GraphicsBuffer;
 
 public class InteractionManager : MonoBehaviour
 {
-    private List<Interaction> interactions = new List<Interaction>();
+    public List<Interaction> interactions = new List<Interaction>();
     private Camera mainCamera;
+    
     public Interaction ActiveInteraction { get; private set; }
 
     private void Start()
@@ -40,21 +41,11 @@ public class InteractionManager : MonoBehaviour
 
         foreach(Interaction interaction in interactions)
         {
-            // get the viewport position of the item
-            Vector2 viewportPos = mainCamera.ScreenToViewportPoint(interaction.transform.position);
-
-            // check if its visible on screen
-            if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.x > 1)
-            {
-                continue;
-            }
-
-            // check if camera has target in view
-            Vector2 toCentre = viewportPos - new Vector2(0.5f, 0.5f);
-            if (toCentre.sqrMagnitude < closestTargetDistance)
+            float distance = Vector3.Distance(transform.position, interaction.transform.position);
+            if (distance < closestTargetDistance)
             {
                 closestTarget = interaction;
-                closestTargetDistance = toCentre.sqrMagnitude;
+                closestTargetDistance = distance;
             }
         }
 
@@ -63,6 +54,11 @@ public class InteractionManager : MonoBehaviour
         ActiveInteraction = closestTarget;
 
         return true;
+    }
+
+    private Vector2 LookingAtVector(Transform target)
+    {
+        return target.forward - transform.forward;
     }
 
     public void Cancel()
