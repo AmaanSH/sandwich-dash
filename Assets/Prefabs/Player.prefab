@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7782374449716802790}
-  - component: {fileID: 1853472630064887024}
   - component: {fileID: 2876167909246129980}
+  - component: {fileID: 4857019920847434181}
   m_Layer: 0
   m_Name: Interactions
   m_TagString: Untagged
@@ -33,19 +33,6 @@ Transform:
   m_Father: {fileID: 4184761227221990035}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1853472630064887024
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 207709218828113908}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.8
-  m_Center: {x: 0, y: 0.24, z: 0}
 --- !u!114 &2876167909246129980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,6 +45,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92087215d88d83e4e9196c77f79617fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactions: []
+--- !u!135 &4857019920847434181
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207709218828113908}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.22
+  m_Center: {x: 0, y: 0.36, z: 0.16}
 --- !u!1 &4183985956433422661
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,6 +689,7 @@ MonoBehaviour:
   <ForceReceiver>k__BackingField: {fileID: 4184761227221990031}
   <Animator>k__BackingField: {fileID: 4269792754357890481}
   <Controller>k__BackingField: {fileID: 4184761227221990028}
+  <InteractionManager>k__BackingField: {fileID: 2876167909246129980}
   <WalkSpeed>k__BackingField: 1
   <DashSpeed>k__BackingField: 2
   <SecondsBetweenDash>k__BackingField: 0.5
