@@ -94,8 +94,11 @@ public class PlayerFreeMovementState : PlayerBaseState
 
     private void OnInteraction()
     {
-        // TODO
-        // find the nearest interaction to the playert
-        // if it is interactable then lets switch state
+        bool selected = stateMachine.InteractionManager.SelectInteraction();
+
+        if (selected)
+        {
+            stateMachine.SwitchState(new PlayerInteractionState(stateMachine));
+        }
     }
 }

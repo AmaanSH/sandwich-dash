@@ -9,6 +9,8 @@ public class PlayerStateMachine : StateMachine
     [field: SerializeField] public ForceReceiver ForceReceiver { get; private set; }
     [field: SerializeField] public Animator Animator { get; private set; }
     [field: SerializeField] public CharacterController Controller { get; private set; }
+    [field: SerializeField] public InteractionManager InteractionManager { get; private set; }
+    [field: SerializeField] public ItemHolderManager ItemHolder { get; private set; }
     [field: SerializeField] public float WalkSpeed { get; private set; }
     [field: SerializeField] public float DashSpeed { get; private set; }
     [field: SerializeField] public float SecondsBetweenDash { get; private set; }

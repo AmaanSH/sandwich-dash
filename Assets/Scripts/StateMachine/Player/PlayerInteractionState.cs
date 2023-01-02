@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class PlayerInteractionState : PlayerBaseState
 {
+    private Interaction active;
     public PlayerInteractionState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
     {
+        active = stateMachine.InteractionManager.ActiveInteraction;
 
+        active.InteractionFinished += InteractionFinished;
+
+        Debug.Log($"Interaction {active.name}");
+
+        active.Interact();
     }
 
     public override void Tick(float deltaTime)
@@ -18,6 +25,13 @@ public class PlayerInteractionState : PlayerBaseState
 
     public override void Exit()
     {
+        active.InteractionFinished -= InteractionFinished;
+    }
 
+    private void InteractionFinished()
+    {
+        stateMachine.InteractionManager.RemoveInteraction(active);
+        
+        stateMachine.SwitchState(new PlayerFreeMovementState(stateMachine));
     }
 }

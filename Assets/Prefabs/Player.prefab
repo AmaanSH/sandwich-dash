@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92087215d88d83e4e9196c77f79617fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerStateMachine: {fileID: 4184761227221990034}
   interactions: []
 --- !u!135 &4857019920847434181
 SphereCollider:
@@ -649,6 +650,7 @@ GameObject:
   - component: {fileID: 4184761227221990028}
   - component: {fileID: 4184761227221990031}
   - component: {fileID: 4184761227221990030}
+  - component: {fileID: 2188439442808831284}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -690,6 +692,7 @@ MonoBehaviour:
   <Animator>k__BackingField: {fileID: 4269792754357890481}
   <Controller>k__BackingField: {fileID: 4184761227221990028}
   <InteractionManager>k__BackingField: {fileID: 2876167909246129980}
+  <ItemHolder>k__BackingField: {fileID: 2188439442808831284}
   <WalkSpeed>k__BackingField: 1
   <DashSpeed>k__BackingField: 2
   <SecondsBetweenDash>k__BackingField: 0.5
@@ -753,6 +756,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dede9d3a871d66e4387643c7ae6246aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2188439442808831284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4184761227221990025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23c385a18dd5d544086f2197eadaee7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holderTransform: {fileID: 4180181268590586367}
 --- !u!1 &4185047170323342537
 GameObject:
   m_ObjectHideFlags: 0

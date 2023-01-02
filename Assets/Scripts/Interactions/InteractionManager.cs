@@ -6,6 +6,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class InteractionManager : MonoBehaviour
 {
+    public PlayerStateMachine playerStateMachine;
     public List<Interaction> interactions = new List<Interaction>();
     private Camera mainCamera;
     
@@ -18,15 +19,20 @@ public class InteractionManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<Interaction>(out Interaction interaction))
+        if (other.TryGetComponent(out Interaction interaction))
         {
-            interactions.Add(interaction);
+            interaction.Init(playerStateMachine);
+
+            if (interaction.CanInteract())
+            {
+                interactions.Add(interaction);
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<Interaction>(out Interaction interaction))
+        if (other.TryGetComponent(out Interaction interaction))
         {
             RemoveInteraction(interaction);
         }
@@ -65,7 +71,6 @@ public class InteractionManager : MonoBehaviour
     {
         if (ActiveInteraction)
         {
-            ActiveInteraction.Exit();
             ActiveInteraction = null;
         }
     }

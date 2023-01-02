@@ -1,13 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public abstract class Interaction : MonoBehaviour
-{
-    protected Animation animation;
-    protected bool canUse;
+{    
+    public Animation animationClip;
 
+    protected PlayerStateMachine stateMachine;
+    
+    public event Action InteractionFinished;
+
+    public void Init(PlayerStateMachine stateMachine)
+    {
+        this.stateMachine = stateMachine;
+    }
+    
     public abstract void Interact();
-    public abstract void CanInteract();
-    public abstract void Exit();
+    public abstract bool CanInteract();
+    
+    public virtual void Exit()
+    {
+        InteractionFinished?.Invoke();
+    }
 }
