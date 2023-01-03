@@ -11,6 +11,7 @@ public class PlayerStateMachine : StateMachine
     [field: SerializeField] public CharacterController Controller { get; private set; }
     [field: SerializeField] public InteractionManager InteractionManager { get; private set; }
     [field: SerializeField] public ItemHolderManager ItemHolder { get; private set; }
+    [field: SerializeField] public GameManager GameManager { get; private set; }
     [field: SerializeField] public float WalkSpeed { get; private set; }
     [field: SerializeField] public float DashSpeed { get; private set; }
     [field: SerializeField] public float SecondsBetweenDash { get; private set; }
@@ -19,6 +20,9 @@ public class PlayerStateMachine : StateMachine
     public Transform MainCameraTransform { get; private set; }
 
     private DateTime nextDashReadyTime;
+
+    public bool HasCompletedOrder { get; private set; }
+    public IngredientType CompletedOrderJam { get; private set; }
 
 
     private void Start()
@@ -36,5 +40,15 @@ public class PlayerStateMachine : StateMachine
     public bool CanDash()
     {
         return DateTime.Now > nextDashReadyTime;
+    }
+
+    public void SetOrderReady(bool value)
+    {
+        HasCompletedOrder = value;
+    }
+
+    public void SetOrderJam(IngredientType jam)
+    {
+        CompletedOrderJam = jam;
     }
 }

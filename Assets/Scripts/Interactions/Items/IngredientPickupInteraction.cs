@@ -8,7 +8,7 @@ public class IngredientPickupInteraction : Interaction
 
     public override bool CanInteract()
     {
-        return stateMachine.ItemHolder.HoldingIngredient != ingredient;
+        return stateMachine.ItemHolder.HoldingIngredient != ingredient && !stateMachine.HasCompletedOrder;
     }
 
     public override void Interact()

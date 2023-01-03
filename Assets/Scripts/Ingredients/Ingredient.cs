@@ -8,7 +8,8 @@ public enum IngredientType
     RaspberryJam,
     StrawberryJam,
     Marmalade,
-    GrapeJelly
+    GrapeJelly,
+    Plate
 }
 
 public enum IngredientMode

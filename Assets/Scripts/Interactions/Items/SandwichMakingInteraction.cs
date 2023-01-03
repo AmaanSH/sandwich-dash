@@ -27,7 +27,7 @@ public class SandwichMakingInteraction : Interaction
 
     public override bool CanInteract()
     {
-        return stateMachine.ItemHolder.HoldingIngredient;
+        return stateMachine.ItemHolder.HoldingIngredient && !stateMachine.HasCompletedOrder;
     }
 
     public override void Interact()
@@ -80,10 +80,32 @@ public class SandwichMakingInteraction : Interaction
                     // find jam object
                     GameObject jam = GetJamModel(currentHolding.IngredientType);
                     GameObject cloned = Instantiate(jam, holder);
-                    cloned.transform.SetPositionAndRotation(cloned.transform.position + new Vector3(0f, 0.01f, 0f), Quaternion.identity);
+                    cloned.transform.position = cloned.transform.position + new Vector3(0f, 0.01f, 0f);
 
                     // move to the next stage
                     stage = SandwichStage.TopBread;
+                }
+                break;
+            case SandwichStage.Transfer:
+                if (currentHolding.IngredientType == IngredientType.Plate)
+                {
+                    Transform sandwichPlateHolder = stateMachine.ItemHolder.CurrentHolding.transform.GetChild(0);
+
+                    Instantiate(holder.gameObject, sandwichPlateHolder);
+
+                    // HACKY!
+                    sandwichPlateHolder.localScale = new Vector3(10f, 10f, 10f);
+
+                    foreach (Transform child in holder)
+                    {
+                        Destroy(child.gameObject);
+                    }
+
+                    stateMachine.SetOrderReady(true);
+                    stateMachine.SetOrderJam(currentIngredients[1].IngredientType);
+
+                    currentIngredients.Clear();
+                    stage = SandwichStage.BaseBread;
                 }
                 break;
         }
