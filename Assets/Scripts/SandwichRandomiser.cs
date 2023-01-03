@@ -14,8 +14,6 @@ public class SandwichRandomiser : MonoBehaviour
     public Sprite sandwichSprite;
     public JamSprite[] jams;
 
-    private const float TIME_MULTIPLIER = 0.2f;
-
     public Order GenerateOrder()
     {
         IngredientType jam = GetJam();

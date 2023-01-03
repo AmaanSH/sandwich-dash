@@ -6,6 +6,7 @@ using System;
 public abstract class Interaction : MonoBehaviour
 {    
     public Animation animationClip;
+    public bool keepInteractionOnCompletion;
 
     protected PlayerStateMachine stateMachine;
     

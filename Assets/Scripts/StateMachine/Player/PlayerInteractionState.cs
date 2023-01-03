@@ -30,7 +30,8 @@ public class PlayerInteractionState : PlayerBaseState
 
     private void InteractionFinished()
     {
-        stateMachine.InteractionManager.RemoveInteraction(active);
+        if (!active.keepInteractionOnCompletion)
+            stateMachine.InteractionManager.RemoveInteraction(active);
         
         stateMachine.SwitchState(new PlayerFreeMovementState(stateMachine));
     }

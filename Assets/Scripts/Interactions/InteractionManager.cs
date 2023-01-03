@@ -62,11 +62,6 @@ public class InteractionManager : MonoBehaviour
         return true;
     }
 
-    private Vector2 LookingAtVector(Transform target)
-    {
-        return target.forward - transform.forward;
-    }
-
     public void Cancel()
     {
         if (ActiveInteraction)

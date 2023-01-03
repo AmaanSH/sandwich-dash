@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Tilemaps.TilemapRenderer;
 
 public class Order
 {
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour
 {
     public OrderPanel orderPanel;
     public Transform orderHolder;
-    public SandwichRandomiser sandwichRandomiser;
+    public CustomerQueue customerQueue;
 
     private List<OrderPanel> activeOrderPanels = new List<OrderPanel>();
 
@@ -32,23 +33,35 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(5f);
 
-            CreateOrder();
+            if (customerQueue.QueueFull() || customerQueue.QueueMovingUp)
+            {
+                if (customerQueue.QueueMovingUp)
+                {
+                    Debug.Log("Skipping spawning as the queue is moving!");
+                }
+                yield return null;
+            }
+            else
+            {
+                customerQueue.SpawnCustomer();
+            }
         }
     }
 
-    public void CreateOrder()
+    public void CreateOrder(QueueSpot spot)
     {
-        Order order = sandwichRandomiser.GenerateOrder();
-        Debug.Log($"Generated order for {order.jamName} with a max time of {order.maxTime}");
+        if (spot.order == null) { return; }
 
         totalOrders++;
 
         OrderPanel panel = Instantiate(orderPanel, orderHolder);
-        panel.Setup(totalOrders, order);
+        panel.Setup(totalOrders, spot.order);
 
         activeOrderPanels.Add(panel);
 
         panel.OnOrderTimeup += OnOrderTimeUp;
+
+        customerQueue.MarkCustomerInteractedWith();
     }
 
     public void OnOrderTimeUp(OrderPanel panel)
