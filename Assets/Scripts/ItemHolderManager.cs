@@ -71,8 +71,12 @@ public class ItemHolderManager : MonoBehaviour
 
     public void RemoveItem()
     {
+        if (CurrentHolding.TryGetComponent<Ingredient>(out _))
+        {
+            HoldingIngredient = null;
+        }
+
         Destroy(CurrentHolding);
-        
         CurrentHolding = null;
 
         //rightShoulder.rotation = originalRotation;

@@ -12,7 +12,36 @@ public class CustomerQueue : MonoBehaviour
 
     public bool QueueMovingUp { get; private set; }
 
-    public void SpawnCustomer()
+    private void Start()
+    {
+        for (int i = 0; i < queueSpots.Length; i++)
+        {
+            queueSpots[i].OnCustomerWaitedTooLong += CustomerWaitedTooLong;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        for (int i = 0; i < queueSpots.Length; i++)
+        {
+            queueSpots[i].OnCustomerWaitedTooLong -= CustomerWaitedTooLong;
+        }
+    }
+    
+    public void Cleanup()
+    {
+        for (int i = 0; i < queueSpots.Length; i++)
+        {
+            queueSpots[i].OnCustomerWaitedTooLong -= CustomerWaitedTooLong;
+        }
+
+        for (int i = 0; i < queueSpots.Length; i++)
+        {
+            queueSpots[i].ClearQueue(true);
+        }
+    }
+
+    public QueueSpot SpawnCustomer()
     {
         GameObject customer = SelectRandomCustomerPrefab();
         QueueSpot queueSpot = GetAvailableQueueSpot();
@@ -24,13 +53,22 @@ public class CustomerQueue : MonoBehaviour
 
             queueSpot.SetCustomer(newCustomer);
             StartCoroutine(queueSpot.MoveCustomerToQueueSpot());
+
+            return queueSpot;
         }
+
+        return null;
     }
-    
+  
     public void MarkCustomerInteractedWith()
     {
         queueSpots[0].ClearQueue(true);
 
+        StartCoroutine(MoveCustomers());
+    }
+
+    public void CustomerWaitedTooLong(QueueSpot spot)
+    {
         StartCoroutine(MoveCustomers());
     }
 

@@ -26,32 +26,35 @@ public class PlayerFreeMovementState : PlayerBaseState
 
     public override void Tick(float deltaTime)
     {
-        float speed = (isDashing) ? stateMachine.DashSpeed : stateMachine.WalkSpeed;
-        float value = (isDashing) ? 1f : 0.5f;
-
-        Vector3 movement = (isDashing) ? GetDashMovement() : GetMovement();
-        Move(movement * speed, deltaTime);
-
-        if (isDashing)
+        if (!stateMachine.GameManager.IsGameOver)
         {
-            dashingTimeElapsed += deltaTime;
-            if (dashingTimeElapsed > DASH_TIME)
-            {
-                isDashing = false;
-                dashingTimeElapsed = 0f;
-            }
-        }
-        else
-        {
-            if (stateMachine.InputReader.MovementValue == Vector2.zero)
-            {
-                stateMachine.Animator.SetFloat(MOVEMENT_SPEED, 0f, ANIMATOR_DAMP_TIME, deltaTime);
-                return;
-            }
-        }
+            float speed = (isDashing) ? stateMachine.DashSpeed : stateMachine.WalkSpeed;
+            float value = (isDashing) ? 1f : 0.5f;
 
-        stateMachine.Animator.SetFloat(MOVEMENT_SPEED, value, ANIMATOR_DAMP_TIME, deltaTime);
-        FaceMovementDirection(movement, deltaTime);
+            Vector3 movement = (isDashing) ? GetDashMovement() : GetMovement();
+            Move(movement * speed, deltaTime);
+
+            if (isDashing)
+            {
+                dashingTimeElapsed += deltaTime;
+                if (dashingTimeElapsed > DASH_TIME)
+                {
+                    isDashing = false;
+                    dashingTimeElapsed = 0f;
+                }
+            }
+            else
+            {
+                if (stateMachine.InputReader.MovementValue == Vector2.zero)
+                {
+                    stateMachine.Animator.SetFloat(MOVEMENT_SPEED, 0f, ANIMATOR_DAMP_TIME, deltaTime);
+                    return;
+                }
+            }
+
+            stateMachine.Animator.SetFloat(MOVEMENT_SPEED, value, ANIMATOR_DAMP_TIME, deltaTime);
+            FaceMovementDirection(movement, deltaTime);
+        }
     }
 
     public override void Exit()
@@ -59,7 +62,7 @@ public class PlayerFreeMovementState : PlayerBaseState
         stateMachine.InputReader.InteractEvent -= OnInteraction;
         stateMachine.InputReader.DashEvent -= OnDash;
     }
-
+    
     private Vector3 GetMovement()
     {
         return new Vector3(-stateMachine.InputReader.MovementValue.x, 0, -stateMachine.InputReader.MovementValue.y);

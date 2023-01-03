@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class Order
 
 public class GameManager : MonoBehaviour
 {
+    private const int BAD_ORDER_MAX = 3;
+    
     public OrderPanel orderPanel;
     public Transform orderHolder;
     public CustomerQueue customerQueue;
@@ -21,30 +24,64 @@ public class GameManager : MonoBehaviour
     private int totalOrders = 0;
     private int goodOrders = 0;
     private int badOrders = 0;
+    
+    public bool IsGameOver { get; private set; }
+    private bool firstOrder = true;
+
+    public event Action onGameOverEvent;
 
     private void Start()
     {
         StartCoroutine(GenerateOrders());
+
+        onGameOverEvent += GameOver;
     }
 
     public IEnumerator GenerateOrders()
     {
-        while (true)
+        while (!IsGameOver)
         {
-            yield return new WaitForSeconds(5f);
+            // pick up the pace with spawning new customers the longer the game has been running for
+            float spawnTime = (firstOrder) ? 5f : Mathf.Clamp(20f - (Time.timeSinceLevelLoad / 10f), 10f, 20f);
+
+            Debug.Log(spawnTime);
+
+            if (firstOrder)
+            {
+                firstOrder = false;
+            }
+
+            yield return new WaitForSeconds(spawnTime);
 
             if (customerQueue.QueueFull() || customerQueue.QueueMovingUp)
             {
-                if (customerQueue.QueueMovingUp)
-                {
-                    Debug.Log("Skipping spawning as the queue is moving!");
-                }
                 yield return null;
             }
             else
             {
-                customerQueue.SpawnCustomer();
+                QueueSpot spot = customerQueue.SpawnCustomer();
+                if (spot)
+                {
+                    spot.OnCustomerWaitedTooLong += OnCustomerWaitedTooLong;
+                }
             }
+        }
+    }
+
+    private void GameOver()
+    {
+        // TODO: display a screen with total orders we took, total good, total bad
+        // TODO: show a star rating (?)
+        Debug.Log("Game Over!");
+        Debug.Log($"Total good orders {goodOrders} Total bad orders {badOrders}");
+
+        customerQueue.Cleanup();
+
+        for (int i = 0; i < activeOrderPanels.Count; i++)
+        {
+            activeOrderPanels[i].OnOrderTimeup -= OnOrderTimeUp;
+            
+            Destroy(activeOrderPanels[i].gameObject);
         }
     }
 
@@ -62,6 +99,12 @@ public class GameManager : MonoBehaviour
         panel.OnOrderTimeup += OnOrderTimeUp;
 
         customerQueue.MarkCustomerInteractedWith();
+    }
+
+    public void OnCustomerWaitedTooLong(QueueSpot spot)
+    {
+        SetBadOrder();
+        spot.OnCustomerWaitedTooLong -= OnCustomerWaitedTooLong;
     }
 
     public void OnOrderTimeUp(OrderPanel panel)
@@ -100,11 +143,23 @@ public class GameManager : MonoBehaviour
 
     public void SetBadOrder()
     {
-        badOrders++;
+        if (!IsGameOver)
+        {
+            badOrders++;
+
+            if (badOrders > BAD_ORDER_MAX)
+            {
+                IsGameOver = true;
+                onGameOverEvent?.Invoke();
+            }
+        }
     }
 
     public void SetGoodOrder()
     {
-        goodOrders++;
+        if (!IsGameOver)
+        {
+            goodOrders++;
+        }
     }
 }
