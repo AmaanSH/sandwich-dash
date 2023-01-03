@@ -50,12 +50,12 @@ public class GameManager : MonoBehaviour
 
     public void CreateOrder(QueueSpot spot)
     {
-        if (spot.order == null) { return; }
+        if (spot.Order == null) { return; }
 
         totalOrders++;
 
         OrderPanel panel = Instantiate(orderPanel, orderHolder);
-        panel.Setup(totalOrders, spot.order);
+        panel.Setup(totalOrders, spot.Order);
 
         activeOrderPanels.Add(panel);
 

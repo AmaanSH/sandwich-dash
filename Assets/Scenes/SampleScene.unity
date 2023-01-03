@@ -1483,8 +1483,6 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 06242c3d7794d7944ba48313c3952af6, type: 3}
   - jamType: 4
     sprite: {fileID: 21300000, guid: dd59a4f2569dbcf43b5ff7b2b5037f85, type: 3}
-  spawnTransform: {fileID: 0}
-  endPosition: {fileID: 0}
 --- !u!4 &246487057
 Transform:
   m_ObjectHideFlags: 0
@@ -3889,6 +3887,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 914928665}
+  - component: {fileID: 914928666}
   m_Layer: 0
   m_Name: Spot3
   m_TagString: Untagged
@@ -3911,6 +3910,20 @@ Transform:
   m_Father: {fileID: 1398237189}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &914928666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914928664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393132b6e11853749bb3adcbf0cdae1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Spot>k__BackingField: {fileID: 914928664}
+  <Index>k__BackingField: 2
 --- !u!4 &932483432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4661435515762813124, guid: e289bf5debb17f6459818c207d781953, type: 3}
@@ -4896,6 +4909,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1186479698}
+  - component: {fileID: 1186479699}
   m_Layer: 0
   m_Name: Spot2
   m_TagString: Untagged
@@ -4918,6 +4932,20 @@ Transform:
   m_Father: {fileID: 1398237189}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1186479699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186479697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393132b6e11853749bb3adcbf0cdae1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Spot>k__BackingField: {fileID: 1186479697}
+  <Index>k__BackingField: 1
 --- !u!1001 &1194420235
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5603,18 +5631,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   queueSpots:
-  - spot: {fileID: 1659213032}
-    customerReady: 0
-    animator: {fileID: 0}
-    isMoving: 0
-  - spot: {fileID: 1186479697}
-    customerReady: 0
-    animator: {fileID: 0}
-    isMoving: 0
-  - spot: {fileID: 914928664}
-    customerReady: 0
-    animator: {fileID: 0}
-    isMoving: 0
+  - {fileID: 1659213034}
+  - {fileID: 1186479699}
+  - {fileID: 914928666}
   spawnPosition: {fileID: 2085113004}
   queue: {fileID: 1398237189}
   customerPrefabs:
@@ -6148,6 +6167,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1659213033}
+  - component: {fileID: 1659213034}
   m_Layer: 0
   m_Name: Spot1
   m_TagString: Untagged
@@ -6170,6 +6190,20 @@ Transform:
   m_Father: {fileID: 1398237189}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1659213034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659213032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393132b6e11853749bb3adcbf0cdae1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Spot>k__BackingField: {fileID: 1659213032}
+  <Index>k__BackingField: 0
 --- !u!1001 &1697874608
 PrefabInstance:
   m_ObjectHideFlags: 0

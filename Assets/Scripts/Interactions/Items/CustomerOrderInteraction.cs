@@ -13,7 +13,7 @@ public class CustomerOrderInteraction : Interaction
     {
         QueueSpot queueSpot = stateMachine.GameManager.customerQueue.GetQueueSpot(0);
 
-        if (queueSpot.Customer != null && queueSpot.order != null)
+        if (queueSpot.Customer != null && queueSpot.Order != null)
         {
             stateMachine.GameManager.CreateOrder(queueSpot);
         }

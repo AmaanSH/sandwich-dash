@@ -1,0 +1,77 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Search;
+using UnityEngine;
+using System;
+using Unity.VisualScripting;
+
+public class QueueSpot : MonoBehaviour
+{
+    private readonly int MOVEMENT_SPEED = Animator.StringToHash("MovementSpeed");
+    private const float ANIMATOR_DAMP_TIME = 0.1f;
+    
+    public event Action<QueueSpot> CustomerAtFrontOfQueue;
+
+    [field: SerializeField] public SandwichRandomiser SandwichRandomiser { get; private set; }
+    [field: SerializeField]  public GameObject Spot { get; private set; }
+    [field: SerializeField] public float Index { get; private set; }
+    public bool CustomerReady { get; private set; }
+    public Animator Animator { get; private set; }
+    public GameObject Customer { get; private set; }
+    public bool IsMoving { get; private set; }
+    public Order Order { get; private set; }
+
+    public void SetCustomer(GameObject customer)
+    {
+        Customer = customer;
+        Animator = customer.GetComponent<Animator>();
+    }
+
+    public void SetOrder(Order order)
+    {
+        Order = order;
+    }
+
+    public IEnumerator MoveCustomerToQueueSpot()
+    {
+        IsMoving = true;
+
+        while (Customer.transform.position != Spot.transform.position)
+        {
+            Customer.transform.position = Vector3.MoveTowards(Customer.transform.position, Spot.transform.position, 1f * Time.deltaTime);
+
+            if (Animator)
+                Animator.SetFloat(MOVEMENT_SPEED, 0.5f, ANIMATOR_DAMP_TIME, Time.deltaTime);
+
+            yield return 0;
+        }
+
+        Animator.SetFloat(MOVEMENT_SPEED, 0f);
+        IsMoving = false;
+
+        if (Index == 0)
+        {
+            CreateOrder();
+        }
+    }
+
+    public void ClearQueue(bool destroy = false)
+    {
+        CustomerReady = false;
+
+        if (destroy)
+            Destroy(Customer);
+
+        Customer = null;
+        Order = null;
+    }
+
+    private void CreateOrder()
+    {
+        Order order = SandwichRandomiser.GenerateOrder();
+        Debug.Log($"Generated order for {order.jamName} with a max time of {order.maxTime}");
+
+        Order = order;
+        CustomerReady = true;
+    }
+}
