@@ -53,7 +53,10 @@ public class CustomerQueue : MonoBehaviour
         while (customer.transform.position != destination.transform.position)
         {            
             customer.transform.position = Vector3.MoveTowards(customer.transform.position, destination.transform.position, 1f * Time.deltaTime);
-            queue.animator.SetFloat(MOVEMENT_SPEED, 0.5f, ANIMATOR_DAMP_TIME, Time.deltaTime);
+            
+            if (queue.animator)
+                queue.animator.SetFloat(MOVEMENT_SPEED, 0.5f, ANIMATOR_DAMP_TIME, Time.deltaTime);
+            
             yield return 0;
         }
 
@@ -154,6 +157,7 @@ public class CustomerQueue : MonoBehaviour
 
                 queueSpots[i].Customer = queueSpots[i + 1].Customer;
                 queueSpots[i + 1].Customer = null;
+                queueSpots[i + 1].animator = null;
 
                 yield return StartCoroutine(MoveCustomerToQueueSpot(queueSpots[i], queueSpots[i].Customer, queueSpots[i].spot));
             }
