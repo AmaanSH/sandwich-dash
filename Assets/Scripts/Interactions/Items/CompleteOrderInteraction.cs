@@ -7,7 +7,7 @@ public class CompleteOrderInteraction : Interaction
     public Transform holder;
     public override bool CanInteract()
     {
-        return stateMachine.HasCompletedOrder;
+        return stateMachine.HasCompletedOrder && holder.childCount == 0;
     }
 
     public override void Interact()
@@ -17,17 +17,18 @@ public class CompleteOrderInteraction : Interaction
         // okay.. lets move this to the holder transform
         holding.transform.SetParent(holder);
         holding.transform.localPosition = Vector3.zero;
+        holding.transform.localRotation = Quaternion.identity;
 
         stateMachine.ItemHolder.RestCurrentHolding();
 
         stateMachine.SetOrderReady(false);
 
-        Invoke(nameof(CheckOrder), 0.2f);
-
+        StartCoroutine(CheckOrder());
+        
         base.Exit();
     }
 
-    private void CheckOrder()
+    private IEnumerator CheckOrder()
     {
         // TODO: is this an order that was generated?
         OrderPanel panel = stateMachine.GameManager.FindOrderWithJam(stateMachine.CompletedOrderJam);
@@ -45,6 +46,8 @@ public class CompleteOrderInteraction : Interaction
 
             stateMachine.GameManager.CompleteOrder(panel.OrderId);
         }
+
+        yield return new WaitForSeconds(0.5f);
 
         foreach (Transform child in holder)
         {

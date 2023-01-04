@@ -8,11 +8,10 @@ public class ItemHolderManager : MonoBehaviour
     public Transform holderTransform;
     public Transform rightShoulder;
     public Transform leftShoulder;
+    public HoldingPanel holdingPanel;
 
     public GameObject CurrentHolding { get; private set; }
-
     public Ingredient HoldingIngredient { get; private set; }
-
     public Transform OriginalParent { get; private set; }
     public Vector3 OriginalPosition { get; private set; }
     public Vector3 OriginalScale { get; private set; }
@@ -62,18 +61,21 @@ public class ItemHolderManager : MonoBehaviour
         if (item.TryGetComponent<Ingredient>(out Ingredient ingredient))
         {
             HoldingIngredient = ingredient;
+            holdingPanel.SetHolding(ingredient.Icon, ingredient.IngredientName);
         }
         else
         {
             HoldingIngredient = null;
+            holdingPanel.ClearHolding();
         }
     }
-
+    
     public void RemoveItem()
     {
         if (CurrentHolding.TryGetComponent<Ingredient>(out _))
         {
             HoldingIngredient = null;
+            holdingPanel.ClearHolding();
         }
 
         Destroy(CurrentHolding);
@@ -85,6 +87,12 @@ public class ItemHolderManager : MonoBehaviour
 
     public void RestCurrentHolding()
     {
+        if (CurrentHolding.TryGetComponent<Ingredient>(out _))
+        {
+            HoldingIngredient = null;
+            holdingPanel.ClearHolding();
+        }
+
         CurrentHolding = null;
     }
 
@@ -94,6 +102,12 @@ public class ItemHolderManager : MonoBehaviour
         CurrentHolding.transform.localPosition = OriginalPosition;
         CurrentHolding.transform.localRotation = Quaternion.identity;
         CurrentHolding.transform.localScale = OriginalScale;
+
+        if (CurrentHolding.TryGetComponent<Ingredient>(out _))
+        {
+            HoldingIngredient = null;
+            holdingPanel.ClearHolding();
+        }
 
         CurrentHolding = null;
     }
