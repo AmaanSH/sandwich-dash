@@ -13,11 +13,12 @@ public class Order
 
 public class GameManager : MonoBehaviour
 {
-    private const int BAD_ORDER_MAX = 3;
+    private const int BAD_ORDER_MAX = 5;
     
     public OrderPanel orderPanel;
     public Transform orderHolder;
     public CustomerQueue customerQueue;
+    public GameOverPanel gameOverPanel;
 
     private List<OrderPanel> activeOrderPanels = new List<OrderPanel>();
 
@@ -83,6 +84,8 @@ public class GameManager : MonoBehaviour
             
             Destroy(activeOrderPanels[i].gameObject);
         }
+
+        gameOverPanel.SetGameOverScreen(goodOrders, badOrders);
     }
 
     public void CreateOrder(QueueSpot spot)

@@ -88,6 +88,8 @@ public class PlayerFreeMovementState : PlayerBaseState
 
     private void OnDash()
     {
+        if (stateMachine.GameManager.IsGameOver) { return; }
+        
         if (stateMachine.CanDash())
         {
             stateMachine.SetDash();
@@ -97,6 +99,8 @@ public class PlayerFreeMovementState : PlayerBaseState
 
     private void OnInteraction()
     {
+        if (stateMachine.GameManager.IsGameOver) { return; }
+        
         bool selected = stateMachine.InteractionManager.SelectInteraction();
 
         if (selected)
