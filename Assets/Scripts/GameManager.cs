@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Tilemaps.TilemapRenderer;
 
 public class Order
 {
@@ -17,8 +16,14 @@ public class GameManager : MonoBehaviour
     
     public OrderPanel orderPanel;
     public Transform orderHolder;
+
     public CustomerQueue customerQueue;
+    public CustomerQueue readyQueue;
+
+    public StatusPanel statusPanel;
+    
     public GameOverPanel gameOverPanel;
+    public int ActiveOrders { get; private set; }
 
     private List<OrderPanel> activeOrderPanels = new List<OrderPanel>();
 
@@ -44,8 +49,6 @@ public class GameManager : MonoBehaviour
         {
             // pick up the pace with spawning new customers the longer the game has been running for
             float spawnTime = (firstOrder) ? 5f : Mathf.Clamp(20f - (Time.timeSinceLevelLoad / 10f), 10f, 20f);
-
-            Debug.Log(spawnTime);
 
             if (firstOrder)
             {
@@ -98,15 +101,23 @@ public class GameManager : MonoBehaviour
         panel.Setup(totalOrders, spot.Order);
 
         activeOrderPanels.Add(panel);
+        ActiveOrders++;
 
         panel.OnOrderTimeup += OnOrderTimeUp;
+
+        // move customer to the ready queue
+        QueueSpot newSpot = readyQueue.SpawnCustomer(spot.Customer);
+        panel.SetCustomer(newSpot.Customer);
 
         customerQueue.MarkCustomerInteractedWith();
     }
 
     public void OnCustomerWaitedTooLong(QueueSpot spot)
     {
-        SetBadOrder();
+        SetBadOrder(true);
+
+        readyQueue.MarkCustomerInteractedWith();
+        
         spot.OnCustomerWaitedTooLong -= OnCustomerWaitedTooLong;
     }
 
@@ -115,7 +126,9 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Order {panel.OrderId} timed out");
 
         CompleteOrder(panel.OrderId);
-        SetBadOrder();
+        SetBadOrder(true);
+
+        statusPanel.AddStatusMessage($"Order missed! ({badOrders}/{BAD_ORDER_MAX})", false);
     }
 
     public void MarkItemComplete(int orderId, IngredientType ingredient)
@@ -140,17 +153,24 @@ public class GameManager : MonoBehaviour
         // remove the order panel
         activeOrderPanels.Remove(orderPanel);
 
+        readyQueue.MarkCustomerInteractedWith(orderPanel.Customer);
+
+        ActiveOrders--;
+
         // destroy the game object
         Destroy(orderPanel.gameObject);
     }
 
-    public void SetBadOrder()
+    public void SetBadOrder(bool missed = false)
     {
         if (!IsGameOver)
         {
             badOrders++;
 
-            if (badOrders > BAD_ORDER_MAX)
+            string statusText = (missed) ? "Order missed!" : "Bad order!";
+            statusPanel.AddStatusMessage($"{statusText} ({badOrders}/{BAD_ORDER_MAX})", false);
+
+            if (badOrders >= BAD_ORDER_MAX)
             {
                 IsGameOver = true;
                 onGameOverEvent?.Invoke();
@@ -163,6 +183,8 @@ public class GameManager : MonoBehaviour
         if (!IsGameOver)
         {
             goodOrders++;
+
+            statusPanel.AddStatusMessage($"Good order! ({goodOrders})", true);
         }
     }
 }

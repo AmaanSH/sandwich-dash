@@ -41,9 +41,9 @@ public class CustomerQueue : MonoBehaviour
         }
     }
 
-    public QueueSpot SpawnCustomer()
+    public QueueSpot SpawnCustomer(GameObject customerObj = null)
     {
-        GameObject customer = SelectRandomCustomerPrefab();
+        GameObject customer = (customerObj) ? customerObj : SelectRandomCustomerPrefab();
         QueueSpot queueSpot = GetAvailableQueueSpot();
         
         if (customer && queueSpot != null)
@@ -63,6 +63,15 @@ public class CustomerQueue : MonoBehaviour
     public void MarkCustomerInteractedWith()
     {
         queueSpots[0].ClearQueue(true);
+
+        StartCoroutine(MoveCustomers());
+    }
+
+    public void MarkCustomerInteractedWith(GameObject customer)
+    {
+        QueueSpot spot = GetQueueSpot(customer);
+
+        spot.ClearQueue(true);
 
         StartCoroutine(MoveCustomers());
     }

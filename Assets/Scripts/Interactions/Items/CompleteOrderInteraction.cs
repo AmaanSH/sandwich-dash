@@ -30,24 +30,18 @@ public class CompleteOrderInteraction : Interaction
 
     private IEnumerator CheckOrder()
     {
-        // TODO: is this an order that was generated?
+        yield return new WaitForSeconds(0.5f);
+        
         OrderPanel panel = stateMachine.GameManager.FindOrderWithJam(stateMachine.CompletedOrderJam);
         if (panel == null)
         {
-            // okay this was a bad order... play some FX?
-            Debug.Log("Bad order - doesn't exist!");
             stateMachine.GameManager.SetBadOrder();
         }
         else
         {
-            Debug.Log("Good order!");
-            
             stateMachine.GameManager.SetGoodOrder();
-
             stateMachine.GameManager.CompleteOrder(panel.OrderId);
         }
-
-        yield return new WaitForSeconds(0.5f);
 
         foreach (Transform child in holder)
         {

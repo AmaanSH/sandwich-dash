@@ -15,7 +15,14 @@ public class CustomerOrderInteraction : Interaction
 
         if (queueSpot.Customer != null && queueSpot.Order != null)
         {
-            stateMachine.GameManager.CreateOrder(queueSpot);
+            if (stateMachine.GameManager.ActiveOrders >= 3)
+            {
+                stateMachine.GameManager.statusPanel.AddStatusMessage("You can only have 3 orders at a time!", false);
+            }
+            else
+            {
+                stateMachine.GameManager.CreateOrder(queueSpot);
+            }
         }
 
         base.Exit();

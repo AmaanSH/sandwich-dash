@@ -12,13 +12,14 @@ public class OrderPanel : MonoBehaviour
     public OrderPanelListing panelListing;
     public Image timeBar;
     public Transform panelHolder;
-    
+
     private OrderPanelListing[] listings;
     private int maxTime = 0;
 
     public event Action<OrderPanel> OnOrderTimeup;
 
     public int OrderId { get; private set; }
+    public GameObject Customer { get; private set; }
 
     public float TimeElapsed { get; private set; }
     public IngredientType JamType { get; private set; }
@@ -44,6 +45,11 @@ public class OrderPanel : MonoBehaviour
         OnOrderTimeup?.Invoke(this);
     }
 
+    public void SetCustomer(GameObject customer)
+    {
+        Customer = customer;
+    }
+
     public void Setup(int id, Order order)
     {
         OrderId = id;
@@ -56,7 +62,6 @@ public class OrderPanel : MonoBehaviour
         listings[1] = Instantiate(panelListing, panelHolder);
         listings[2] = Instantiate(panelListing, panelHolder);
         
-
         listings[0].SetText("Bread", IngredientType.Bread);
         listings[1].SetText(order.jamName, order.jam);
         listings[2].SetText("Bread", IngredientType.Bread);
