@@ -1223,8 +1223,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 8256b6087f7e650459dae44cd6851756, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 0
+  m_PlayOnAwake: 1
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -2510,7 +2510,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 0e737508a9d7bad429f01b4155a082fd, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
   Loop: 1
@@ -2710,7 +2710,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c58e9a060026a294a89c8375e68bb4f6, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
   Loop: 1
@@ -6154,7 +6154,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: cb8f5ecaf05878c40a6a25feced87a25, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
   Loop: 1
@@ -6542,8 +6542,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.000000026859702, y: 0.857049, z: -0.51523495, w: 0.000000044678803}
-  m_LocalPosition: {x: 0.38049993, y: 2.19, z: 2.71}
+  m_LocalRotation: {x: -0.000000013151803, y: 0.841356, z: -0.5404814, w: -0.000000020473134}
+  m_LocalPosition: {x: 0.38049993, y: 2.58, z: 2.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8408,8 +8408,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1270612475}
-  m_LocalRotation: {x: 0.000000026859702, y: 0.857049, z: -0.51523495, w: 0.000000044678803}
-  m_LocalPosition: {x: 0.38049993, y: 2.19, z: 2.71}
+  m_LocalRotation: {x: -0.000000013151803, y: 0.841356, z: -0.5404814, w: -0.000000020473134}
+  m_LocalPosition: {x: 0.38049993, y: 2.58, z: 2.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9088,7 +9088,6 @@ MonoBehaviour:
   - {fileID: 2091715611}
   - {fileID: 1411147640}
   gameAudioLayers:
-  - {fileID: 145426706}
   - {fileID: 875517514}
   - {fileID: 1386936999}
   - {fileID: 282134279}
@@ -9136,7 +9135,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 5a3d1c74768a4ad4d8f04fd655c3d88a, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 0
   m_Pitch: 1
   Loop: 1
@@ -10077,7 +10076,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 2.41, z: 1.28}
+  m_FollowOffset: {x: 0, y: 2.8, z: 1.28}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1

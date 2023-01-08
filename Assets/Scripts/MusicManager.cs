@@ -26,11 +26,6 @@ public class MusicManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-
-            foreach(AudioSource source in gameAudioLayers)
-            {
-                source.volume = 0;
-            }
         }
     }
 
@@ -69,16 +64,6 @@ public class MusicManager : MonoBehaviour
                 currentLayer++;
             }
 
-            if (currentLayer == 0)
-            {
-                foreach (AudioSource source in gameAudioLayers)
-                {
-                    source.volume = 0;
-                    source.Stop();
-                    source.Play();
-                }
-            }
-
             StartCoroutine(FadeAudio(gameAudioLayers[currentLayer]));
         }
     }
@@ -91,10 +76,6 @@ public class MusicManager : MonoBehaviour
 
             StartCoroutine(FadeAudio(source, true));
 
-            if (currentLayer == 0)
-            {
-                source.Stop();
-            }
             if (currentLayer - 1 >= -1)
             {
                 currentLayer--;
