@@ -21,7 +21,7 @@ public class CustomerOrderInteraction : Interaction
             }
             else
             {
-                stateMachine.GameManager.CreateOrder(queueSpot);
+                stateMachine.GameManager.TakeOrder(queueSpot);
             }
         }
 

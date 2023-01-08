@@ -67,9 +67,19 @@ public class CustomerQueue : MonoBehaviour
         StartCoroutine(MoveCustomers());
     }
 
-    public void MarkCustomerInteractedWith(GameObject customer)
+    public IEnumerator MarkCustomerInteractedWith(int orderId)
     {
-        QueueSpot spot = GetQueueSpot(customer);
+        while (QueueMovingUp)
+        {
+            yield return 0;
+        }
+
+        QueueSpot spot = GetQueueSpotWithOrder(orderId);
+
+        while (spot.IsMoving)
+        {
+            yield return 0;
+        }
 
         spot.ClearQueue(true);
 
@@ -78,6 +88,8 @@ public class CustomerQueue : MonoBehaviour
 
     public void CustomerWaitedTooLong(QueueSpot spot)
     {
+        spot.ClearQueue(true);
+        
         StartCoroutine(MoveCustomers());
     }
 
@@ -86,11 +98,11 @@ public class CustomerQueue : MonoBehaviour
         return queueSpots[index];
     }
 
-    public QueueSpot GetQueueSpot(GameObject customer)
+    public QueueSpot GetQueueSpotWithOrder(int orderId)
     {
         foreach (QueueSpot queue in queueSpots)
         {
-            if (queue.Customer == customer)
+            if (queue.OrderId == orderId)
             {
                 return queue;
             }
@@ -152,6 +164,12 @@ public class CustomerQueue : MonoBehaviour
                 }
 
                 next.SetCustomer(current.Customer);
+
+                if (current.OrderId != -1)
+                {
+                    next.SetOrderId(current.OrderId);
+                }
+
                 current.ClearQueue();
 
                 yield return StartCoroutine(next.MoveCustomerToQueueSpot());

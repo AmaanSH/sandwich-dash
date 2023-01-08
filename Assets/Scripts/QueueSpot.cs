@@ -26,9 +26,11 @@ public class QueueSpot : MonoBehaviour
     public GameObject Customer { get; private set; }
     public bool IsMoving { get; private set; }
     public Order Order { get; private set; }
+    public int OrderId { get; private set; } = -1;
 
     private float timeElpased = 0f;
     private Timer currentTimer;
+    private bool audioPlayed;
 
     public void SetCustomer(GameObject customer)
     {
@@ -46,9 +48,9 @@ public class QueueSpot : MonoBehaviour
         }
     }
 
-    public void SetOrder(Order order)
+    public void SetOrderId(int orderId)
     {
-        Order = order;
+        OrderId = orderId;
     }
 
     public IEnumerator MoveCustomerToQueueSpot()
@@ -86,6 +88,7 @@ public class QueueSpot : MonoBehaviour
 
         Customer = null;
         Order = null;
+        OrderId = -1;
 
         if (currentTimer)
         {
@@ -113,12 +116,16 @@ public class QueueSpot : MonoBehaviour
         if (QueueType == QueueType.Waiting && CustomerReady && Customer != null)
         {
             timeElpased += Time.deltaTime;
-
             currentTimer.SetFill(360 / (ANGRY_TIME / timeElpased));
-          
+
+            if (ANGRY_TIME - timeElpased <= 5f && !audioPlayed)
+            {
+                MusicManager.Instance.Play("TimeRunningOut");
+                audioPlayed = true;
+            }
+
             if (timeElpased > ANGRY_TIME)
             {
-                ClearQueue(true);
                 OnCustomerWaitedTooLong?.Invoke(this);
             }
         }

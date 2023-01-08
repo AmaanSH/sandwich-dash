@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using Unity.Jobs.LowLevel.Unsafe;
 using System;
+
+[Serializable]
+public class IngredientImage
+{
+    public IngredientType ingredientType;
+    public Sprite sprite;
+}
 
 public class OrderPanel : MonoBehaviour
 {
@@ -12,15 +18,15 @@ public class OrderPanel : MonoBehaviour
     public OrderPanelListing panelListing;
     public Image timeBar;
     public Transform panelHolder;
+    public List<IngredientImage> ingredientImages = new List<IngredientImage>();
 
     private OrderPanelListing[] listings;
     private int maxTime = 0;
+    private bool timeoutAudioPlayed = false;
 
     public event Action<OrderPanel> OnOrderTimeup;
 
     public int OrderId { get; private set; }
-    public GameObject Customer { get; private set; }
-
     public float TimeElapsed { get; private set; }
     public IngredientType JamType { get; private set; }
 
@@ -30,6 +36,14 @@ public class OrderPanel : MonoBehaviour
         {
             TimeElapsed += Time.deltaTime;
             timeBar.fillAmount = TimeElapsed / maxTime;
+
+            timeBar.color = Color.Lerp(Color.green, Color.red, TimeElapsed / maxTime);
+            
+            if (maxTime - TimeElapsed <= 5f && !timeoutAudioPlayed) 
+            {
+                MusicManager.Instance.Play("TimeRunningOut");
+                timeoutAudioPlayed = true;
+            }
 
             if (TimeElapsed >= maxTime)
             {
@@ -45,15 +59,10 @@ public class OrderPanel : MonoBehaviour
         OnOrderTimeup?.Invoke(this);
     }
 
-    public void SetCustomer(GameObject customer)
-    {
-        Customer = customer;
-    }
-
     public void Setup(int id, Order order)
     {
         OrderId = id;
-        orderNumber.text = "Order #" + id;
+        orderNumber.text = "#" + id;
         maxTime = order.maxTime;
 
         listings = new OrderPanelListing[3];
@@ -61,10 +70,10 @@ public class OrderPanel : MonoBehaviour
         listings[0] = Instantiate(panelListing, panelHolder);
         listings[1] = Instantiate(panelListing, panelHolder);
         listings[2] = Instantiate(panelListing, panelHolder);
-        
-        listings[0].SetText("Bread", IngredientType.Bread);
-        listings[1].SetText(order.jamName, order.jam);
-        listings[2].SetText("Bread", IngredientType.Bread);
+
+        listings[0].SetText("Bread", IngredientType.Bread, GetImageForIngredient(IngredientType.Bread));
+        listings[1].SetText(order.jamName, order.jam, GetImageForIngredient(order.jam));
+        listings[2].SetText("Bread", IngredientType.Bread, GetImageForIngredient(IngredientType.Bread));
 
         JamType = order.jam;
 
@@ -81,5 +90,16 @@ public class OrderPanel : MonoBehaviour
                 break;
             }
         }
+    }
+
+    private Sprite GetImageForIngredient(IngredientType ingredient)
+    {
+        IngredientImage ingredientImage = ingredientImages.Find(x => x.ingredientType == ingredient);
+        if (ingredientImage != null)
+        {
+            return ingredientImage.sprite;
+        }
+
+        return null;
     }
 }

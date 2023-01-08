@@ -13,7 +13,7 @@ public class PlayerInteractionState : PlayerBaseState
 
         active.InteractionFinished += InteractionFinished;
 
-        Debug.Log($"Interaction {active.name}");
+        //Debug.Log($"Interaction {active.name}");
 
         active.Interact();
     }

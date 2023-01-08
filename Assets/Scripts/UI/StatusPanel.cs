@@ -3,55 +3,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class StatusString
-{
-    public string text;
-    public bool good;
-}
-
 public class StatusPanel : MonoBehaviour
 {
     private const float WAIT_BETWEEN_MESSAGES = 3f;
 
     public TMP_Text statusText;
 
-    private List<StatusString> statusMessages = new List<StatusString>();
+    private CanvasGroup canvasGroup;
 
     private void Start()
     {
-        StartCoroutine(UpdateStatusText());
+        canvasGroup = statusText.gameObject.GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0;
     }
 
     public void AddStatusMessage(string message, bool good)
     {
-        StatusString status = new StatusString();
-        status.text = message;
-        status.good = good;
-
-        statusMessages.Add(status);
+        StopAllCoroutines();
+        
+        StartCoroutine(UpdateStatusText(message, good));
     }
-
-    private IEnumerator UpdateStatusText()
+    
+    private IEnumerator UpdateStatusText(string text, bool good)
     {
-        while (true)
+        statusText.text = text;
+        statusText.color = (good) ? Color.green : Color.red;
+
+        yield return ToggleFade(false);
+        yield return new WaitForSeconds(WAIT_BETWEEN_MESSAGES);
+        yield return ToggleFade(true);
+
+        statusText.text = "";
+    }
+    
+    private IEnumerator ToggleFade(bool fadeOut)
+    {
+        float time = 0f;
+        float duration = 0.5f;
+
+        while (time < duration)
         {
-            if (statusMessages.Count > 0)
-            {
-                statusText.text = statusMessages[0].text;
-                statusText.color = (statusMessages[0].good) ? Color.green : Color.red;
-
-                statusMessages.RemoveAt(0);
-
-                yield return new WaitForSeconds(WAIT_BETWEEN_MESSAGES);
-
-                statusText.text = "";
-            }
-            else
-            {
-                statusText.text = "";
-            }
-
-            yield return 0;
+            time += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp((fadeOut) ? 1f : 0f, (fadeOut) ? 0f : 1f, time / duration);
+            yield return null;
         }
     }
 }

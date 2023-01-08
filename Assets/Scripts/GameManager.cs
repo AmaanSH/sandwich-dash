@@ -12,25 +12,36 @@ public class Order
 
 public class GameManager : MonoBehaviour
 {
-    private const int BAD_ORDER_MAX = 5;
-    
+    private const int BAD_ORDER_MAX = 10;
+
     public OrderPanel orderPanel;
     public Transform orderHolder;
+
+    public MusicManager musicManager;
 
     public CustomerQueue customerQueue;
     public CustomerQueue readyQueue;
 
     public StatusPanel statusPanel;
-    
+
     public GameOverPanel gameOverPanel;
-    public int ActiveOrders { get; private set; }
+    [field: SerializeField] public bool TestSpawn { get; private set; }
+    [field: SerializeField] public bool IgnoreEndCondition { get; private set; }
 
     private List<OrderPanel> activeOrderPanels = new List<OrderPanel>();
+
+    public int ActiveOrders 
+    {
+        get
+        {
+            return activeOrderPanels.Count;
+        }
+    }
 
     private int totalOrders = 0;
     private int goodOrders = 0;
     private int badOrders = 0;
-    
+
     public bool IsGameOver { get; private set; }
     private bool firstOrder = true;
 
@@ -48,7 +59,10 @@ public class GameManager : MonoBehaviour
         while (!IsGameOver)
         {
             // pick up the pace with spawning new customers the longer the game has been running for
-            float spawnTime = (firstOrder) ? 5f : Mathf.Clamp(20f - (Time.timeSinceLevelLoad / 10f), 10f, 20f);
+            float spawnTime = (firstOrder) ? 5f : Mathf.Clamp(20f - (Time.timeSinceLevelLoad / 20f), 10f, 20f);
+
+            if (TestSpawn)
+                spawnTime = 1f;
 
             if (firstOrder)
             {
@@ -66,6 +80,7 @@ public class GameManager : MonoBehaviour
                 QueueSpot spot = customerQueue.SpawnCustomer();
                 if (spot)
                 {
+                    spot.OnCustomerWaitedTooLong -= OnCustomerWaitedTooLong;
                     spot.OnCustomerWaitedTooLong += OnCustomerWaitedTooLong;
                 }
             }
@@ -74,12 +89,10 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
-        // TODO: display a screen with total orders we took, total good, total bad
-        // TODO: show a star rating (?)
-        Debug.Log("Game Over!");
-        Debug.Log($"Total good orders {goodOrders} Total bad orders {badOrders}");
+        if (IgnoreEndCondition) { return; }
 
         customerQueue.Cleanup();
+        readyQueue.Cleanup();
 
         for (int i = 0; i < activeOrderPanels.Count; i++)
         {
@@ -88,26 +101,32 @@ public class GameManager : MonoBehaviour
             Destroy(activeOrderPanels[i].gameObject);
         }
 
+        musicManager.StopAllLayers();
+
         gameOverPanel.SetGameOverScreen(goodOrders, badOrders);
+
+        musicManager.Play("GameOver");
     }
 
-    public void CreateOrder(QueueSpot spot)
+    public void TakeOrder(QueueSpot spot)
     {
         if (spot.Order == null) { return; }
+
+        musicManager.Play("OrderTaken");
 
         totalOrders++;
 
         OrderPanel panel = Instantiate(orderPanel, orderHolder);
         panel.Setup(totalOrders, spot.Order);
+        panel.OnOrderTimeup += OnOrderTimeUp;
 
         activeOrderPanels.Add(panel);
-        ActiveOrders++;
-
-        panel.OnOrderTimeup += OnOrderTimeUp;
 
         // move customer to the ready queue
         QueueSpot newSpot = readyQueue.SpawnCustomer(spot.Customer);
-        panel.SetCustomer(newSpot.Customer);
+        newSpot.SetOrderId(panel.OrderId);
+        
+        Debug.Log($"Registered #{newSpot.OrderId} customer is {newSpot.Customer.name}");
 
         customerQueue.MarkCustomerInteractedWith();
     }
@@ -115,10 +134,6 @@ public class GameManager : MonoBehaviour
     public void OnCustomerWaitedTooLong(QueueSpot spot)
     {
         SetBadOrder(true);
-
-        readyQueue.MarkCustomerInteractedWith();
-        
-        spot.OnCustomerWaitedTooLong -= OnCustomerWaitedTooLong;
     }
 
     public void OnOrderTimeUp(OrderPanel panel)
@@ -128,7 +143,7 @@ public class GameManager : MonoBehaviour
         CompleteOrder(panel.OrderId);
         SetBadOrder(true);
 
-        statusPanel.AddStatusMessage($"Order missed! ({badOrders}/{BAD_ORDER_MAX})", false);
+        panel.OnOrderTimeup -= OnOrderTimeUp;
     }
 
     public void MarkItemComplete(int orderId, IngredientType ingredient)
@@ -150,15 +165,15 @@ public class GameManager : MonoBehaviour
         // find the order panel
         OrderPanel orderPanel = activeOrderPanels.Find(x => x.OrderId == orderId);
 
+        // destroy the game object
+        Destroy(orderPanel.gameObject);
+
         // remove the order panel
         activeOrderPanels.Remove(orderPanel);
 
-        readyQueue.MarkCustomerInteractedWith(orderPanel.Customer);
+        // moving the ready queue up
+        StartCoroutine(readyQueue.MarkCustomerInteractedWith(orderId));
 
-        ActiveOrders--;
-
-        // destroy the game object
-        Destroy(orderPanel.gameObject);
     }
 
     public void SetBadOrder(bool missed = false)
@@ -167,10 +182,13 @@ public class GameManager : MonoBehaviour
         {
             badOrders++;
 
+            musicManager.Play("OrderRejected");
+            musicManager.StopAudioLayer();
+
             string statusText = (missed) ? "Order missed!" : "Bad order!";
             statusPanel.AddStatusMessage($"{statusText} ({badOrders}/{BAD_ORDER_MAX})", false);
 
-            if (badOrders >= BAD_ORDER_MAX)
+            if (badOrders == BAD_ORDER_MAX && !IgnoreEndCondition)
             {
                 IsGameOver = true;
                 onGameOverEvent?.Invoke();
@@ -183,6 +201,9 @@ public class GameManager : MonoBehaviour
         if (!IsGameOver)
         {
             goodOrders++;
+
+            musicManager.Play("OrderAccepted");
+            musicManager.PlayAudioLayer();
 
             statusPanel.AddStatusMessage($"Good order! ({goodOrders})", true);
         }

@@ -10,7 +10,7 @@ public class GameOverPanel : MonoBehaviour
 
     public void SetGameOverScreen(int goodOrders, int badOrders)
     {
-        completedText.text = $"You completed <b>{goodOrders}</b> orders and failed <b>{badOrders}</b> orders.";
+        completedText.text = $"You completed <b>{goodOrders}</b> orders!";
 
         gameObject.SetActive(true);
     }
