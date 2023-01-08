@@ -6,22 +6,27 @@ public class CustomerOrderInteraction : Interaction
 {
     public override bool CanInteract()
     {
-        return stateMachine.GameManager.customerQueue.QueueCustomersReady();
+        return true;
     }
 
     public override void Interact()
     {
-        QueueSpot queueSpot = stateMachine.GameManager.customerQueue.GetQueueSpot(0);
+        bool ready = stateMachine.GameManager.customerQueue.QueueCustomersReady();
 
-        if (queueSpot.Customer != null && queueSpot.Order != null)
+        if (ready)
         {
-            if (stateMachine.GameManager.ActiveOrders >= 3)
+            QueueSpot queueSpot = stateMachine.GameManager.customerQueue.GetQueueSpot(0);
+
+            if (queueSpot.Customer != null && queueSpot.Order != null)
             {
-                stateMachine.GameManager.statusPanel.AddStatusMessage("You can only have 3 orders at a time!", false);
-            }
-            else
-            {
-                stateMachine.GameManager.TakeOrder(queueSpot);
+                if (stateMachine.GameManager.ActiveOrders >= 3)
+                {
+                    stateMachine.GameManager.statusPanel.AddStatusMessage("You can only have 3 orders at a time!", false);
+                }
+                else
+                {
+                    stateMachine.GameManager.TakeOrder(queueSpot);
+                }
             }
         }
 

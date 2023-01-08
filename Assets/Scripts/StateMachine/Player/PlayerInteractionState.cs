@@ -11,6 +11,7 @@ public class PlayerInteractionState : PlayerBaseState
     {
         active = stateMachine.InteractionManager.ActiveInteraction;
 
+        active.InteractionFinished -= InteractionFinished;
         active.InteractionFinished += InteractionFinished;
 
         //Debug.Log($"Interaction {active.name}");

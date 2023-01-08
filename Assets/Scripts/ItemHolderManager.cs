@@ -13,13 +13,6 @@ public class ItemHolderManager : MonoBehaviour
     public Vector3 OriginalPosition { get; private set; }
     public Vector3 OriginalScale { get; private set; }
 
-    private Quaternion originalRotation;
-
-    public void Start()
-    {
-        originalRotation = leftShoulder.rotation;
-    }
-
     public void SetItem(GameObject item)
     {
         if (CurrentHolding != null)
@@ -77,9 +70,6 @@ public class ItemHolderManager : MonoBehaviour
 
         Destroy(CurrentHolding);
         CurrentHolding = null;
-
-        //rightShoulder.rotation = originalRotation;
-        //leftShoulder.rotation = originalRotation;
     }
 
     public void RestCurrentHolding()
