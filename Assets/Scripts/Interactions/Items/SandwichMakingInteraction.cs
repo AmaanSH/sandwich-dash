@@ -69,7 +69,7 @@ public class SandwichMakingInteraction : Interaction
                 }
                 break;
             case SandwichStage.Jam:
-                if (currentHolding.IngredientType != IngredientType.Bread)
+                if (currentHolding.IngredientType != IngredientType.Bread && currentHolding.IngredientType != IngredientType.Plate)
                 {
                     // store the current ingredient in the list
                     currentIngredients.Add(currentHolding);
