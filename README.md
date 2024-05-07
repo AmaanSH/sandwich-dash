@@ -3,7 +3,7 @@
 
 
 This was a short game I created in 5 days for the Kindred Games Community Jam. The theme was Jam. This game involves you preparing jam sandwich orders for your animal friends.
-The game also included layered audio tracks where each level is introduced as you get orders right.
+The game also included layered audio tracks where each level is introduced as you get orders right. The game gets progressively harder the longer it runs for
 
 # Game Description
 His pals are hungry! It's up to this cat to jam things up!
